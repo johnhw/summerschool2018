@@ -5,21 +5,21 @@ from multiprocessing import Queue, Process
 
 # recognise a sequence of integers (e.g. keypress scan codes)
 def on_sequence(seq):
-    ix = 0
-    def update(elt):
-        nonlocal ix        
+    ix = [0]
+    def update(elt):        
         # match? Increment and return true if complete
-        if elt==seq[ix]:            
-            ix += 1
+        if elt==seq[ix[0]]:            
+            ix[0] += 1
             if ix==len(seq):
-                ix = 0
+                ix[0] = 0
                 return True
         else:
             # reset to start
-            ix = 0
+            ix[0] = 0
         return False
     return update
 
+import time
 def capture_keys(queue):
     print("Ctrl-ESC to exit!")
     all_keys = np.zeros(128, dtype=np.float32)
@@ -39,8 +39,8 @@ def capture_keys(queue):
                 if exit_seq(k.scan_code):
                     running = False
         
-        queue.put((all_keys.tobytes(), k.time))
-    queue.put(None)
+        queue.put((all_keys.tobytes(), k.time, k.name))
+    queue.put(None)    
     keyboard.restore_state(current_state)        
 
 
@@ -52,7 +52,7 @@ if __name__=="__main__":
     keys.start()
     result = q.get()
     while result:
-        arr_bytes, time = result
+        arr_bytes, time, name = result
         keys = np.frombuffer(arr_bytes, dtype=np.float32)
         print(keys)
         result = q.get()

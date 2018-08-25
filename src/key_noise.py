@@ -23,6 +23,6 @@ class Corrupter:
         self.vecs[self.ix] = add_noise(self.last_sensor, self.sensor_noise)
         self.ix = (self.ix+1) % self.n
         ixs = self.ix_array[self.ix:] + self.ix_array[:self.ix]        
-        output = np.sum([self.mix_l[i] @ self.vecs[ixs[i]] for i in range(self.n)], axis=0)
+        output = np.sum([np.dot(self.mix_l[i], self.vecs[ixs[i]]) for i in range(self.n)], axis=0)
         self.last_output = (1-self.obs_alpha) * output  + self.obs_alpha*self.last_output
         return add_noise(self.last_output, self.obs_noise)

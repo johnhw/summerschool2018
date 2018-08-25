@@ -1,4 +1,9 @@
-from tkinter import *
+# py 2.x compatibility
+try: 
+    from Tkinter import *
+except ImportError:
+    from tkinter import *
+
 import numpy as np
 import scipy.linalg, scipy.stats
 
@@ -84,6 +89,9 @@ class TKanvas(object):
         
     def delete(self, tagOrId):
         self.canvas.delete(tagOrId)
+        
+    def title(self, title):
+        self.root.wm_title(title)
         
     def event(self, event_type, event):        
         if event_type=="mousemotion":

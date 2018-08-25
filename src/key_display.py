@@ -1,6 +1,12 @@
 from key_test import capture_keys
 from tkanvas import TKanvas
-from tkinter import mainloop
+# py 2.x compatibility
+try: 
+    import Tkinter as tkinter
+    from Tkinter import mainloop
+except ImportError:
+    from tkinter import mainloop
+
 import numpy as np
 from multiprocessing import Queue, Process
 import matplotlib
@@ -9,6 +15,7 @@ matplotlib.use("tkagg")
 import matplotlib.pyplot as plt
 from rwo import RWO
 from key_noise import Corrupter
+
 
 def tkcolor(rgb):
     return "#" + "".join(("%02X" % (int(c * 255)) for c in rgb[:3]))
@@ -25,7 +32,7 @@ class KeyDisplay(object):
         self.status = 'OK'
         self.rwo = RWO(128)
         self.cmap = plt.get_cmap("viridis")
-       
+        self.canvas.title("Ctrl-ESC-ESC-ESC to quit")
 
         
         np.random.seed(35325)
@@ -33,7 +40,7 @@ class KeyDisplay(object):
         self.corrupter = Corrupter(            
             [random_permutation],
             sensor_noise=np.full((128,), 0.05),                        
-            obs_alpha=0.8,
+            obs_alpha=0.9,
         )
         self.corrupt_keys = np.zeros_like(self.keys)
 
@@ -41,7 +48,7 @@ class KeyDisplay(object):
         try:
             result = self.q.get(block=False)
             if result:
-                arr_bytes, time = result
+                arr_bytes, time, _ = result
                 self.keys[:] = np.frombuffer(arr_bytes, dtype=np.float32)
                 self.last_t = time
             else:
@@ -78,6 +85,15 @@ class KeyDisplay(object):
                         src.canvas.itemconfig(self.rects[ix], fill=tkcolor(color))
                     else:
                         src.canvas.itemconfig(self.rects[ix], fill=tkcolor(color))
+
+def key_tk():    
+    import keyboard
+    current_state = keyboard.stash_state()    
+    q = Queue()
+    keys = Process(target=capture_keys, args=(q,))
+    keys.start()
+    k = KeyDisplay(q)
+    return current_state
 
 
 if __name__ == "__main__":
