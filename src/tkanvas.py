@@ -7,6 +7,41 @@ except ImportError:
 import numpy as np
 import scipy.linalg, scipy.stats
 
+def clamp(val, minimum=0, maximum=255):
+    if val < minimum:
+        return minimum
+    if val > maximum:
+        return maximum
+    return val
+
+def colorscale(hexstr, scalefactor):
+    """
+    Scales a hex string by ``scalefactor``. Returns scaled hex string.
+
+    To darken the color, use a float value between 0 and 1.
+    To brighten the color, use a float value greater than 1.
+
+    >>> colorscale("#DF3C3C", .5)
+    #6F1E1E
+    >>> colorscale("#52D24F", 1.6)
+    #83FF7E
+    >>> colorscale("#4F75D2", 1)
+    #4F75D2
+    """
+
+    hexstr = hexstr.strip('#')
+
+    if scalefactor < 0 or len(hexstr) != 6:
+        return hexstr
+
+    r, g, b = int(hexstr[:2], 16), int(hexstr[2:4], 16), int(hexstr[4:], 16)
+
+    r = clamp(r * scalefactor)
+    g = clamp(g * scalefactor)
+    b = clamp(b * scalefactor)
+
+    return "#%02x%02x%02x" % (r, g, b)
+
 class TKanvas(object):
     def __init__(self, draw_fn=None, tick_fn=None, event_fn=None, quit_fn=None, w=400, h=400, frame_time=20):
         self.root = Tk()
@@ -92,7 +127,7 @@ class TKanvas(object):
         
     def title(self, title):
         self.root.wm_title(title)
-        
+
     def event(self, event_type, event):        
         if event_type=="mousemotion":
             # track mouse offset
@@ -107,10 +142,11 @@ class TKanvas(object):
         if self.event_fn is not None:
             self.event_fn(self, event_type, event)    
     
-    def normal(self, mean, cov, ppfs=(0.65, 0.75, 0.85), **kw):
+    def normal(self, mean, cov, outline='#0000ff', ppfs=(0.55, 0.65, 0.75, 0.85, 0.9), **kw):
         for ppf in reversed(sorted(ppfs)):
             scale = scipy.stats.norm.ppf(ppf)
-            self.error_ellipse(mean, cov, scale=scale, smooth=True, fill='', **kw)        
+            cscale = 2.0*scipy.stats.norm.pdf(scale)
+            self.error_ellipse(mean, cov, scale=scale, smooth=True, outline=colorscale(outline,cscale), fill='', **kw)        
         
     def update(self):
         if self.draw_fn is not None:            

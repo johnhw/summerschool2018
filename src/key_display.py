@@ -1,5 +1,6 @@
 from key_test import capture_keys
 from tkanvas import TKanvas
+import Queue as queue
 
 # py 2.x compatibility
 try:
@@ -112,14 +113,14 @@ class KeyDisplay(object):
             else:
                 self.canvas.quit(None)
 
-            self.corrupt_keys = self.corrupter.update(self.keys)
-            if self.use_rwo:
-                self.rwo.update(self.corrupt_keys, t)
-            self.state = self.transform_fn(self.corrupt_keys).reshape(self.shape)        
-        except:
+                   
+        except queue.Empty:
             # no updates, do nothing
             pass
-
+        self.corrupt_keys = self.corrupter.update(self.keys)
+        if self.use_rwo:
+            self.rwo.update(self.corrupt_keys, time.clock())
+        self.state = self.transform_fn(self.corrupt_keys).reshape(self.shape) 
         
     def draw(self, src):
         # draw the blank squares for the outputs
