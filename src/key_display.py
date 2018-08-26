@@ -24,7 +24,7 @@ def tkcolor(rgb):
 class TKMatrix(object):
     def __init__(self, canvas, shape, size, origin=None, cmap=None):
         self.origin = origin or (size / 2, size / 2)
-        self.cmap = cmap or plt.get_cmap("viridis")        
+        self.cmap = cmap or plt.get_cmap("viridis")
         self.shape = shape
         self.size = size
         self.canvas = canvas
@@ -35,7 +35,7 @@ class TKMatrix(object):
         sz = self.size
         ox, oy = self.origin
         for i in range(self.shape[1]):
-            for j in range(self.shape[0]):            
+            for j in range(self.shape[0]):
                 rect = self.canvas.rectangle(
                     ox + i * sz,
                     oy + j * sz,
@@ -46,61 +46,69 @@ class TKMatrix(object):
                 self.rects.append(rect)
 
     def update(self, matrix):
-        assert(matrix.shape==self.shape)    
+        assert matrix.shape == self.shape
         for i in range(self.shape[0]):
-            for j in range(self.shape[1]):                
-                ix = i * self.shape[1] + j                
-                color = self.cmap(matrix[i,j])[:3]                    
+            for j in range(self.shape[1]):
+                ix = i * self.shape[1] + j
+                color = self.cmap(matrix[i, j])[:3]
                 self.canvas.canvas.itemconfig(self.rects[ix], fill=tkcolor(color))
-                
 
 
 class KeyDisplay(object):
-    def __init__(self, q, rwo_kwargs=None, alpha=0.9, noise=0.05):
-        self.q = q
+    def __init__(
+        self,
+        q,
+        shape=(8, 16),
+        transform_fn=None,
+        rwo_kwargs=None,
+        alpha=0.9,
+        noise=0.05,
+    ):
+        self.transform_fn = transform_fn or (lambda x: x)  # default to identity
+        self.shape = shape
+        self.state = np.zeros(shape)
+
+        self.q = q  # keyboard input
         self.keys = np.zeros(128, dtype=np.float32)
-        self.last_t = 0.0
+
         self.block_size = 24
-        self.canvas = TKanvas(
-            draw_fn=self.draw,
-            tick_fn=self.tick,
-            w=self.block_size * 17,
-            h=self.block_size * 10,
-        )
-        self.matrix_display = TKMatrix(self.canvas, (8,16), 24)
-        self.rects = []
-        self.first = True
+
         self.status = "OK"
         self.use_rwo = rwo_kwargs is not None
         if self.use_rwo:
             self.rwo = RWO(128, **rwo_kwargs)
-
-        self.cmap = plt.get_cmap("viridis")
-        self.canvas.title("Ctrl-ESC-ESC-ESC to quit")
-
-        self.text = self.canvas.text(
-                self.block_size / 2,
-                self.canvas.h - self.block_size / 2,
-                text=str(self.status),
-                fill="white",
-                anchor="w",
-                font=("Arial", 16),
-            )
-
+        
         np.random.seed(35325)
         random_permutation = np.eye(128)[np.random.permutation(128)]
         self.corrupter = Corrupter(
             [random_permutation], sensor_noise=np.full((128,), noise), obs_alpha=alpha
         )
         self.corrupt_keys = np.zeros_like(self.keys)
+        
+        self.canvas = TKanvas(
+            draw_fn=self.draw,
+            tick_fn=self.tick,
+            w=self.block_size * 17,
+            h=self.block_size * 10,
+        )
+        self.canvas.title("Ctrl-ESC-ESC-ESC to quit")
+        self.matrix_display = TKMatrix(self.canvas, self.shape, self.block_size)                
+        self.text = self.canvas.text(
+            self.block_size / 2,
+            self.canvas.h - self.block_size / 2,
+            text=str(self.status),
+            fill="white",
+            anchor="w",
+            font=("Arial", 16),
+        )
+
 
     def tick(self, dt):
         try:
             result = self.q.get(block=False)
             if result:
-                arr_bytes, time, _ = result
+                arr_bytes, _, _ = result
                 self.keys[:] = np.frombuffer(arr_bytes, dtype=np.float32)
-                self.last_t = time
             else:
                 self.canvas.quit(None)
         except:
@@ -110,21 +118,23 @@ class KeyDisplay(object):
         self.corrupt_keys = self.corrupter.update(self.keys)
         if self.use_rwo:
             self.rwo.update(self.corrupt_keys)
+        self.state = self.transform_fn(self.corrupt_keys).reshape(self.shape)        
 
     def draw(self, src):
         # draw the blank squares for the outputs
         if self.use_rwo:
-            src.canvas.itemconfig(self.text, text=str(self.rwo.n_vecs))            
-        self.matrix_display.update(self.corrupt_keys.reshape(8,16))
+            src.canvas.itemconfig(self.text, text=str(self.rwo.n_vecs))
+        self.matrix_display.update(self.state)
 
-def key_tk(rwo_kwargs=None):
+
+def key_tk(*args, **kwargs):
     import keyboard
 
     current_state = keyboard.stash_state()
     q = Queue()
     keys = Process(target=capture_keys, args=(q,))
     keys.start()
-    k = KeyDisplay(q, rwo_kwargs)
+    k = KeyDisplay(q, *args, **kwargs)
     return current_state
 
 
