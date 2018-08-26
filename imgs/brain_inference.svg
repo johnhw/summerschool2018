@@ -24,13 +24,13 @@
      inkscape:window-maximized="1"
      inkscape:window-y="-8"
      inkscape:window-x="-8"
-     inkscape:window-height="1177"
+     inkscape:window-height="1137"
      inkscape:window-width="1920"
      showgrid="false"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
      inkscape:cy="875.08727"
-     inkscape:cx="103.96925"
+     inkscape:cx="-343.52832"
      inkscape:zoom="0.49497475"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -146,7 +146,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -271,15 +271,15 @@
          sodipodi:role="line">X</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:41.05949783px;line-height:25.66218758px;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#cd424f;fill-opacity:1;stroke:none;stroke-width:1.02648747px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="108.24187"
-       y="137.70276"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:28.36356163px;line-height:17.72722626px;font-family:monospace;-inkscape-font-specification:monospace;letter-spacing:0px;word-spacing:0px;fill:#cd424f;fill-opacity:1;stroke:none;stroke-width:0.70908904px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="99.788422"
+       y="139.43571"
        id="text11276"><tspan
          sodipodi:role="line"
          id="tspan11274"
-         x="108.24187"
-         y="137.70276"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Cambria Math';-inkscape-font-specification:'Cambria Math';fill:#cd424f;stroke-width:1.02648747px">p(X)</tspan></text>
+         x="99.788422"
+         y="139.43571"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Cambria Math';-inkscape-font-specification:'Cambria Math';fill:#cd424f;stroke-width:0.70908904px">P(X|Y)</tspan></text>
     <text
        id="text11280"
        y="52.449402"

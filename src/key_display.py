@@ -11,7 +11,6 @@ import numpy as np
 from multiprocessing import Queue, Process
 import matplotlib
 import time
-matplotlib.use("tkagg")
 import matplotlib.pyplot as plt
 from rwo import RWO
 from key_noise import Corrupter

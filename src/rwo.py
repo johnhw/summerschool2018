@@ -3,7 +3,7 @@ import numpy as np
 
 class RWO(object):
 
-    def __init__(self, d, threshold=0.3):
+    def __init__(self, d, threshold=0.45):
         self.bag = None
         self.d = d
         self.threshold = threshold
@@ -15,7 +15,7 @@ class RWO(object):
             self.n_vecs = 1
             return True
         ds = scipy.spatial.distance.cdist(self.bag, vector[None, :], 'euclidean')        
-        
+
         if np.min(ds)>self.threshold:
             # add to the bag if new enough
             self.bag = np.concatenate((self.bag, vector[None, :]), axis=0)
