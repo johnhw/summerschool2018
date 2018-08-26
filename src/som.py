@@ -75,7 +75,10 @@ class SOM:
         ''' Reset weights '''
         self.codebook = np.random.random(self.codebook.shape)
 
-  
+    def score(self, sample, width=1.0):
+        ''' score a sample '''
+        D = ((self.codebook-sample)**2).sum(axis=-1)        
+        return np.exp(-(D.reshape(self.codebook.shape[0:2]))**2/(2*width**2))
         
     def classify(self, sample):
         ''' classify a sample '''

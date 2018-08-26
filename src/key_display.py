@@ -88,8 +88,8 @@ class KeyDisplay(object):
         self.canvas = TKanvas(
             draw_fn=self.draw,
             tick_fn=self.tick,
-            w=self.block_size * 17,
-            h=self.block_size * 10,
+            w=self.block_size * (self.shape[1]+1),
+            h=self.block_size * (self.shape[0]+2),
         )
         self.canvas.title("Ctrl-ESC-ESC-ESC to quit")
         self.matrix_display = TKMatrix(self.canvas, self.shape, self.block_size)                
@@ -107,19 +107,20 @@ class KeyDisplay(object):
         try:
             result = self.q.get(block=False)
             if result:
-                arr_bytes, _, _ = result
+                arr_bytes, t, _ = result
                 self.keys[:] = np.frombuffer(arr_bytes, dtype=np.float32)
             else:
                 self.canvas.quit(None)
+
+            self.corrupt_keys = self.corrupter.update(self.keys)
+            if self.use_rwo:
+                self.rwo.update(self.corrupt_keys, t)
+            self.state = self.transform_fn(self.corrupt_keys).reshape(self.shape)        
         except:
             # no updates, do nothing
             pass
 
-        self.corrupt_keys = self.corrupter.update(self.keys)
-        if self.use_rwo:
-            self.rwo.update(self.corrupt_keys)
-        self.state = self.transform_fn(self.corrupt_keys).reshape(self.shape)        
-
+        
     def draw(self, src):
         # draw the blank squares for the outputs
         if self.use_rwo:
@@ -135,6 +136,9 @@ def key_tk(*args, **kwargs):
     keys = Process(target=capture_keys, args=(q,))
     keys.start()
     k = KeyDisplay(q, *args, **kwargs)
+    keyboard.restore_state(current_state)
+    time.sleep(0.5)
+    keyboard.restore_state(current_state)
     return current_state
 
 
