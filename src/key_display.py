@@ -20,26 +20,29 @@ def tkcolor(rgb):
     return "#" + "".join(("%02X" % (int(c * 255)) for c in rgb[:3]))
 
 class KeyDisplay(object):
-    def __init__(self, q):
+    def __init__(self, q, rwo_kwargs=None, alpha=0.9, noise=0.05):
         self.q = q
         self.keys = np.zeros(128, dtype=np.float32)
         self.last_t = 0.0
-        self.block_size = 24
+        self.block_size = 24        
         self.canvas = TKanvas(draw_fn=self.draw, tick_fn=self.tick, w=self.block_size*17, h = self.block_size*10)
         self.rects = []
         self.first = True
         self.status = 'OK'
-        self.rwo = RWO(128)
+        self.use_rwo = rwo_kwargs is not None
+        if self.use_rwo:                        
+            self.rwo = RWO(128, **rwo_kwargs)
+
         self.cmap = plt.get_cmap("viridis")
         self.canvas.title("Ctrl-ESC-ESC-ESC to quit")
-
+        
         
         np.random.seed(35325)
         random_permutation = np.eye(128)[np.random.permutation(128)]
         self.corrupter = Corrupter(            
             [random_permutation],
-            sensor_noise=np.full((128,), 0.05),                        
-            obs_alpha=0.9,
+            sensor_noise=np.full((128,), noise),                        
+            obs_alpha=alpha,
         )
         self.corrupt_keys = np.zeros_like(self.keys)
 
@@ -57,7 +60,9 @@ class KeyDisplay(object):
             pass
 
         self.corrupt_keys = self.corrupter.update(self.keys)
-        self.rwo.update(self.corrupt_keys)
+        if self.use_rwo:
+            self.rwo.update(self.corrupt_keys)
+        
 
     def draw(self, src):        
         # draw the blank squares for the outputs
@@ -74,7 +79,8 @@ class KeyDisplay(object):
                     self.rects.append(rect)
             self.first = False
         else:
-            src.canvas.itemconfig(self.text, text=str(self.rwo.n_vecs))
+            if self.use_rwo:
+                src.canvas.itemconfig(self.text, text=str(self.rwo.n_vecs))
             # update the fill colours
             for i in range(16):
                 for j in range(8):
@@ -85,13 +91,13 @@ class KeyDisplay(object):
                     else:
                         src.canvas.itemconfig(self.rects[ix], fill=tkcolor(color))
 
-def key_tk():    
+def key_tk(rwo_kwargs=None):    
     import keyboard
     current_state = keyboard.stash_state()    
     q = Queue()
     keys = Process(target=capture_keys, args=(q,))
     keys.start()
-    k = KeyDisplay(q)
+    k = KeyDisplay(q, rwo_kwargs)
     return current_state
 
 

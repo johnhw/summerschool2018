@@ -6,7 +6,7 @@
 # Distributed under the terms of the BSD License.
 # -----------------------------------------------------------------------------
 import numpy as np
-import scipy.weave
+import weave
 
 def fromdistance(fn, shape, center=None, dtype=float):
     def distance(*args):
@@ -56,9 +56,9 @@ def blitz_gaussian(shape, center, sigma=0.5):
     
     """    
     
-    err = scipy.weave.inline(code,
+    err = weave.inline(code,
                            ['result', 'w', 'h', 'x', 'y', 'sigma'],
-                           type_converters=scipy.weave.converters.blitz,
+                           type_converters=weave.converters.blitz,
                            compiler = 'gcc')
     return result
 

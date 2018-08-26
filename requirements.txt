@@ -1,0 +1,9 @@
+matplotlib
+scipy
+numpy
+sklearn
+scikit-image
+weave
+keyboard
+opencv
+pykalman

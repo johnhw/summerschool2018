@@ -1,0 +1,8 @@
+Add better figures to the Kalman filter section (maybe an animation)
+Abstract the array display tkcanvas module to make it cleaner 
+
+Complete and test the use of SOM on the keymap data
+Test all parts of notebook run correctly
+
+
+
