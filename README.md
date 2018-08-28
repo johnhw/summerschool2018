@@ -3,15 +3,16 @@
 
 ## John H. Williamson / University of Glasgow
 
-* [Introduction](i_introduction.ipynb)
-* [Part 1: Learning control manifolds](ii_unsupervised.ipynb)
-* [Part 2: Probabilistically filtering intent](iii_probabilistic.ipynb)
+* [Introduction](0_Introduction.ipynb)
+* [Part 1: Learning control manifolds](1_Learning_Control_Manifolds.ipynb)
+* [Part 2: Probabilistically filtering intent](2_Probabilistic_Filtering.ipynb)
 
 # What is the purpose of this course?
 
 This course aims to to take a fresh look at how computers determine what users want to do. We will examine machine learning approaches to inferring user intention from observed sensor signals.
 
 After this course, you should be able to:
+
 * Have a fundamental understanding of the input problem;
 * Understand the ways in which human-input sensors can vary;
 * Use unsupervised learning to learn **manifolds** or **clustering** which might explain apparently complex behaviour.
