@@ -7,6 +7,18 @@
 * [Part 1: Learning control manifolds](ii_unsupervised.ipynb)
 * [Part 2: Probabilistically filtering intent](iii_probabilistic.ipynb)
 
+# What is the purpose of this course?
+
+This course aims to to take a fresh look at how computers determine what users want to do. We will examine machine learning approaches to inferring user intention from observed sensor signals.
+
+After this course, you should be able to:
+* Have a fundamental understanding of the input problem;
+* Understand the ways in which human-input sensors can vary;
+* Use unsupervised learning to learn **manifolds** or **clustering** which might explain apparently complex behaviour.
+* How to attach manifolds of control ("compressed" versions of things that are sensed) to action spaces (things we might want to do)
+* Use probabilistic inference to **reliably** infer and track an action states
+* Use probabilistic models to accumulate information from the user reliably and efficiently.
+
 ## Technical details
 We will be using Jupyter notebooks with Python 2.7. These exercises will work best if you can run them on a local machine.
 
@@ -36,4 +48,4 @@ Install the required packages above in this environment
 Now you will be able to run the materials
 
 ### Shouldn't we be using Python 3.x?
-**Yes.** we didn't this year for consistency across modules. Most of these materials were *back-ported* from 3.x, so should be easy to convert if you want.
+**Yes.** We didn't this year for consistency across modules. Most of these materials were *back-ported* from 3.x, so should be easy to convert if you want.
