@@ -1,5 +1,5 @@
 # Summer School 2018
-![logo](imgs/logo.png)
+![logo](imgs/logo_full.PNG)
 
 ## John H. Williamson / University of Glasgow
 
