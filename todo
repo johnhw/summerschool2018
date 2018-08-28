@@ -1,13 +1,6 @@
-Continue to add better figures to the Kalman filter section (maybe an animation)
-Add better Kalman example where evidence space != state space   
-Add equations to make kf section clearer
-Animate dynamics plots
 emphasise model-basedness
 better intro to probabilistic filtring
 SOM live pinning example
-write the pf equations accurately and in more detail
-clean up horrible global variables in KF code
-clean up git to reduce file size
 
 
 

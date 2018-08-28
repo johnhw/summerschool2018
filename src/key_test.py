@@ -2,6 +2,7 @@ import keyboard
 
 import numpy as np
 from multiprocessing import Queue, Process
+import time
 
 # recognise a sequence of integers (e.g. keypress scan codes)
 def on_sequence(seq):
@@ -40,8 +41,12 @@ def capture_keys(queue):
                     running = False
         
         queue.put((all_keys.tobytes(), k.time, k.name))
+    keyboard.restore_state(current_state)  
+    time.sleep(0.05)
+    keyboard.restore_state(current_state)  
     queue.put(None)    
-    keyboard.restore_state(current_state)        
+    keyboard.restore_state(current_state)  
+
 
 
 
