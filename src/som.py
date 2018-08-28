@@ -69,6 +69,8 @@ class SOM:
     def __init__(self, *args):
         ''' Initialize som '''
         self.codebook = np.zeros(args)
+        # for interpolation
+        self.meshgrid = np.meshgrid(np.linspace(0,1,args[0]), np.linspace(0,1,args[1]))
         self.reset()
 
     def reset(self):
@@ -79,6 +81,13 @@ class SOM:
         ''' score a sample '''
         D = ((self.codebook-sample)**2).sum(axis=-1)        
         return np.exp(-(D.reshape(self.codebook.shape[0:2]))**2/(2*width**2))
+
+    def interpolate(self, sample, width=1.0):
+        ''' interpolate a sample '''
+        D = ((self.codebook-sample)**2).sum(axis=-1)        
+        weights = np.exp(-(D.reshape(self.codebook.shape[0:2]))**2/(2*width**2))
+        weights = weights / np.sum(weights)
+        return np.stack([self.meshgrid[0]/weights, self.meshgrid[1]/weights])
         
     def classify(self, sample):
         ''' classify a sample '''
