@@ -43,9 +43,9 @@ def colorscale(hexstr, scalefactor):
     return "#%02x%02x%02x" % (r, g, b)
 
 class TKanvas(object):
-    def __init__(self, draw_fn=None, tick_fn=None, event_fn=None, quit_fn=None, w=400, h=400, frame_time=20):
+    def __init__(self, draw_fn=None, tick_fn=None, event_fn=None, quit_fn=None, w=400, h=400, frame_time=20, bgcolor='black'):
         self.root = Tk()
-        self.canvas = Canvas(self.root, background = "black", width=w, height=h)
+        self.canvas = Canvas(self.root, background = bgcolor, width=w, height=h)
         self.w, self.h = w, h
         self.cx = w/2
         self.cy=h/2
@@ -83,6 +83,12 @@ class TKanvas(object):
                 
     def clear(self):
         self.canvas.delete(ALL)
+        
+    def to_front(self, obj):
+        self.canvas.tag_raise(obj)
+     
+    def to_back(self, obj):
+        self.canvas.tag_lower(obj)
         
     def rectangle(self, x1, y1, x2, y2, **kw):
         return self.canvas.create_rectangle( x1, y1, x2, y2, **kw)        
@@ -146,7 +152,7 @@ class TKanvas(object):
         for ppf in reversed(sorted(ppfs)):
             scale = scipy.stats.norm.ppf(ppf)
             cscale = 2.0*scipy.stats.norm.pdf(scale)
-            self.error_ellipse(mean, cov, scale=scale, smooth=True, outline=colorscale(outline,cscale), fill='', **kw)        
+            self.error_ellipse(mean, cov, scale=scale, smooth=True, outline=colorscale(outline,cscale), fill=colorscale(outline,cscale), **kw)        
         
     def update(self):
         if self.draw_fn is not None:            
