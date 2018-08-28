@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 captured_data/*.npy
+.vscode/*
 
 *.log
 .ipynb_checkpoints
