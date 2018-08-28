@@ -1,6 +1,6 @@
-# Summer School 2018
 
-![logo](imgs/logo_full.PNG)
+
+![ACM SIGCHI Summer School on Computational Interaction, Inference Optimization and modeling for the engineering of interactive systems](imgs/logo_full.PNG)
 
 ## John H. Williamson / University of Glasgow
 
